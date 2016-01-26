@@ -1,8 +1,8 @@
-# Project 1 - *Flicks*
+# Project 1 - *MovieViewer*
 
-**Flicks** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/#).
+**MovieViewer** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/#).
 
-Time spent: **X** hours spent in total
+Time spent: **1** hours spent in total (Only completed prework)
 
 ## User Stories
 
