@@ -2,7 +2,7 @@
 
 **MovieViewer** is a movies app using the [The Movie Database API](http://docs.themoviedb.apiary.io/#).
 
-Time spent: **1** hours spent in total (Only completed prework)
+Time spent: **4** hours spent in total
 
 ## User Stories
 
