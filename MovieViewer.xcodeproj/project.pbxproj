@@ -65,9 +65,9 @@
 		452E64991C56E52000C11DF8 /* MovieViewer */ = {
 			isa = PBXGroup;
 			children = (
+				452E649A1C56E52000C11DF8 /* AppDelegate.swift */,
 				452E64B11C5712B200C11DF8 /* View Controllers */,
 				452E64AE1C57127400C11DF8 /* Views */,
-				452E649A1C56E52000C11DF8 /* AppDelegate.swift */,
 				452E649E1C56E52100C11DF8 /* Main.storyboard */,
 				452E64A11C56E52100C11DF8 /* Assets.xcassets */,
 				452E64A31C56E52100C11DF8 /* LaunchScreen.storyboard */,
