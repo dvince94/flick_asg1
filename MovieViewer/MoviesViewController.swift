@@ -10,21 +10,45 @@ import UIKit
 import AFNetworking
 import MBProgressHUD
 
-class MoviesViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
+class MoviesViewController: UIViewController, UICollectionViewDataSource, UICollectionViewDelegate, UISearchBarDelegate {
 
-    @IBOutlet var tableView: UITableView!
+    @IBOutlet weak var searchBar: UISearchBar!
+    @IBOutlet weak var collectionView: UICollectionView!
     var movies: [NSDictionary]?
+    var filteredData: [NSDictionary]?
     var endpoint: String!
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         //Display loading symbol
         loadDataFromNetwork()
         
+        //Navigation bar customization
+        let titleLabel = UILabel()
+        
+        let shadow = NSShadow()
+        shadow.shadowColor = UIColor.redColor().colorWithAlphaComponent(0.5)
+        shadow.shadowOffset = CGSizeMake(2, 2);
+        shadow.shadowBlurRadius = 4;
+        
+        let titleText = NSAttributedString(string: "Movies", attributes: [
+            NSFontAttributeName : UIFont.boldSystemFontOfSize(28),
+            NSForegroundColorAttributeName : UIColor(red: 0.8, green: 0.15, blue: 0.2, alpha: 1),
+            NSShadowAttributeName : shadow
+            ])
+        
+        titleLabel.attributedText = titleText
+        titleLabel.sizeToFit()
+        navigationItem.titleView = titleLabel
+        self.navigationController?.navigationBar.barTintColor = UIColor(red: 0.86, green: 1, blue: 0.81, alpha: 1)
+        //self.tabBarController?.tabBar.translucent = false
+        self.tabBarController?.tabBar.barTintColor = UIColor(red: 0.86, green: 1, blue: 0.81, alpha: 1)
+
         //Pull-Refresh
         let refreshControl = UIRefreshControl()
         refreshControl.addTarget(self, action: "refreshControlAction:", forControlEvents: UIControlEvents.ValueChanged)
-        tableView.insertSubview(refreshControl, atIndex: 0)
+        collectionView.insertSubview(refreshControl, atIndex: 0)
         
         let apiKey = "a07e22bc18f5cb106bfe4cc1f83ad8ed"
         let url = NSURL(string: "https://api.themoviedb.org/3/movie/\(endpoint)?api_key=\(apiKey)")
@@ -46,7 +70,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                         data, options:[]) as? NSDictionary {
                             //print("response: \(responseDictionary)")
                             self.movies = responseDictionary["results"] as? [NSDictionary]
-                            self.tableView.reloadData()
+                            self.filteredData = self.movies
+                            self.collectionView.reloadData()
                     }
                 }
         })
@@ -60,8 +85,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         // Dispose of any resources that can be recreated.
     }
     
-    func tableView(tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if let movies = movies {
+    func collectionView(collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        if let movies = filteredData {
             return movies.count
         }
         else {
@@ -69,29 +94,63 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    // Row display. Implementers should *always* try to reuse cells by setting each cell's reuseIdentifier and querying for available reusable cells with dequeueReusableCellWithIdentifier:
-    // Cell gets various attributes set automatically based on table (separators) and data source (accessory views, editing controls)
-    
-    func tableView(tableView: UITableView, cellForRowAtIndexPath indexPath: NSIndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCellWithIdentifier("MovieCell", forIndexPath: indexPath) as! MovieCell
-        let movie = movies![indexPath.row]
-        let title = movie["title"] as! String
-        let overview = movie["overview"] as! String
+    func collectionView(collectionView: UICollectionView, cellForItemAtIndexPath indexPath: NSIndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCellWithReuseIdentifier("movieCell", forIndexPath: indexPath) as! MovieCollectionCell
         
+        let movie = filteredData![indexPath.row]
         let baseURL = "https://image.tmdb.org/t/p/w342"
         if let posterPath = movie["poster_path"] as? String {
             let imageURL = NSURL(string: baseURL + posterPath)
             cell.posterView.setImageWithURL(imageURL!)
         }
         
-        cell.titleLabel.text = title
-        cell.overviewLabel.text = overview
-        
         return cell
     }
+    
+    func collectionView(collectionView: UICollectionView, didHighlightItemAtIndexPath indexPath: NSIndexPath) {
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! MovieCollectionCell
+        cell.backgroundColor = UIColor.greenColor()
+    }
+    
+    func collectionView(collectionView: UICollectionView, didUnhighlightItemAtIndexPath indexPath: NSIndexPath) {
+        let cell = collectionView.cellForItemAtIndexPath(indexPath) as! MovieCollectionCell
+        cell.backgroundColor = UIColor.clearColor()
+    }
+    
+    // This method updates filteredData based on the text in the Search Box
+    // http://guides.codepath.com/ios/Search-Bar-Guide#example-searching-a-collection-view
+    func searchBar(searchBar: UISearchBar, textDidChange searchText: String) {
+        // When there is no text, filteredData is the same as the original data
+        if searchText.isEmpty {
+            filteredData = movies
+        } else {
+            //Filters throught the movies based on the title, and makes the string lowercase
+            //To make the search case insensitive
+            filteredData = movies!.filter({($0["title"]!.lowercaseString!.containsString(searchText.lowercaseString))
+            })
+        }
+        collectionView.reloadData()
+    }
 
+    //Keyboard Handling
+    func searchBarTextDidBeginEditing(searchBar: UISearchBar) {
+        self.searchBar.showsCancelButton = true
+    }
+    
+    func searchBarCancelButtonClicked(searchBar: UISearchBar) {
+        searchBar.showsCancelButton = false
+        searchBar.text = ""
+        searchBar.resignFirstResponder()
+        filteredData = movies
+        collectionView.reloadData()
+    }
+    
+    func searchBarSearchButtonClicked(searchBar: UISearchBar) {
+        searchBar.resignFirstResponder()
+    }
+    
     // Makes a network request to get updated data
-    // Updates the tableView with the new data
+    // Updates the collectionView with the new data
     // Hides the RefreshControl
     func refreshControlAction(refreshControl: UIRefreshControl) {
         
@@ -115,8 +174,8 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
                 
                 // ... Use the new data to update the data source ...
                 
-                // Reload the tableView now that there is new data
-                self.tableView.reloadData()
+                // Reload the collectionView now that there is new data
+                self.collectionView.reloadData()
                 
                 // Tell the refreshControl to stop spinning
                 refreshControl.endRefreshing()	
@@ -157,9 +216,9 @@ class MoviesViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     override func prepareForSegue(segue: UIStoryboardSegue, sender: AnyObject?) {
-        let cell = sender as! UITableViewCell
-        let indexPath = tableView.indexPathForCell(cell)
-        let movie = movies![indexPath!.row]
+        let cell = sender as! UICollectionViewCell
+        let indexPath = collectionView.indexPathForCell(cell)
+        let movie = filteredData![indexPath!.row]
         
         let detailViewController = segue.destinationViewController as! DetailViewController
         detailViewController.movie = movie

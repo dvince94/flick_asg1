@@ -20,13 +20,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
         
-        let nowPlayingNavigationController = storyboard.instantiateViewControllerWithIdentifier("MoviesNavigationController") as! UINavigationController
+        let nowPlayingNavigationController = storyboard.instantiateViewControllerWithIdentifier("MovieNavigationController") as! UINavigationController
         let nowPlayingViewController = nowPlayingNavigationController.topViewController as! MoviesViewController
         nowPlayingViewController.endpoint = "now_playing"
         nowPlayingViewController.tabBarItem.title = "Now Playing"
         nowPlayingViewController.tabBarItem.image = UIImage(named: "now_playing_icon")
         
-        let topRatedNavigationController = storyboard.instantiateViewControllerWithIdentifier("MoviesNavigationController") as! UINavigationController
+        let topRatedNavigationController = storyboard.instantiateViewControllerWithIdentifier("MovieNavigationController") as! UINavigationController
         let topRatedViewController = topRatedNavigationController.topViewController as! MoviesViewController
         topRatedViewController.endpoint = "top_rated"
         topRatedViewController.tabBarItem.title = "Top Rated"
@@ -34,7 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         //Creating the tab bars
         let tabBarController = UITabBarController()
-        tabBarController.viewControllers = [nowPlayingViewController, topRatedViewController]
+        tabBarController.viewControllers = [nowPlayingNavigationController, topRatedNavigationController]
         
         window?.rootViewController = tabBarController
         window?.makeKeyAndVisible()
