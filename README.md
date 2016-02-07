@@ -63,20 +63,25 @@ Describe any challenges encountered while building the app.
 
 **MovieViewer** is a movies app displaying box office and top rental DVDs using [The Movie Database API](http://docs.themoviedb.apiary.io/#).
 
-Time spent: **1** hours spent in total
+Time spent: **5** hours spent in total
 
 ## User Stories
 
 The following **required** functionality is completed:
 
 - [x] User can view movie details by tapping on a cell.
-- [ ] User can select from a tab bar for either **Now Playing** or **Top Rated** movies.
-- [ ] Customize the selection effect of the cell.
+- [x] User can select from a tab bar for either **Now Playing** or **Top Rated** movies.
+- [x] Customize the selection effect of the cell.
 
 The following **optional** features are implemented:
 
 - [ ] For the large poster, load the low resolution image first and then switch to the high resolution image when complete.
-- [ ] Customize the navigation bar.
+- [x] Customize the navigation bar.
+
+The following **optional** features from week 1 are implemented:
+- [x] Movies are displayed using a CollectionView instead of a TableView.
+- [x] User can search for a movie.
+- [x] Customize the UI.
 
 The following **additional** features are implemented:
 
@@ -91,13 +96,18 @@ Please list two areas of the assignment you'd like to **discuss further with you
 
 Here's a walkthrough of implemented user stories:
 
-<img src='http://i.imgur.com/link/to/your/gif/file.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
+<img src='http://i.imgur.com/G3z8cHm.gif' title='Video Walkthrough' width='' alt='Video Walkthrough' />
 
 GIF created with [LiceCap](http://www.cockos.com/licecap/).
 
 ## Notes
 
 Describe any challenges encountered while building the app.
+
+    One challenge I encountered was figuring out how to customize the selection for the UICollectionViewCell because
+    when I selected one cell, it highlighted the other cells in the same index path, too. To fix this, I decided to
+    just highlight the cell rather than add a color for selection, which prevented the cell from selecting multiple
+    cells.
 
 ## License
 
